@@ -7,21 +7,16 @@ import { MonthSummaryBar } from "@/components/home/month-summary";
 import { QuickAddGrid } from "@/components/home/quick-add-grid";
 import { RecentLog } from "@/components/home/recent-log";
 import { TransactionForm } from "@/components/transactions/transaction-form";
-import type { QuickAdd, Tag, TransactionWithRelations, MonthSummary } from "@/lib/types";
+import { useFund } from "@/lib/store/fund-provider";
+import type { QuickAdd, TransactionWithRelations } from "@/lib/types";
 
-type HomeClientProps = {
-  summary: MonthSummary;
-  quickAdds: QuickAdd[];
-  recent: TransactionWithRelations[];
-  tags: Tag[];
-};
+export function HomeClient() {
+  const fund = useFund();
+  const summary = fund.getMonthSummary();
+  const quickAdds = fund.getQuickAdds();
+  const recent = fund.getRecentTransactions(8);
+  const tags = fund.getTags();
 
-export function HomeClient({
-  summary,
-  quickAdds,
-  recent,
-  tags,
-}: HomeClientProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [selectedQuickAdd, setSelectedQuickAdd] = useState<QuickAdd | null>(null);
   const [editingTransaction, setEditingTransaction] =

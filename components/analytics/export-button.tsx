@@ -3,14 +3,15 @@
 import { useTransition } from "react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { exportTransactionsCsv } from "@/lib/actions/export";
+import { useFund } from "@/lib/store/fund-provider";
 
 export function ExportButton() {
+  const fund = useFund();
   const [pending, startTransition] = useTransition();
 
   const handleExport = () => {
-    startTransition(async () => {
-      const csv = await exportTransactionsCsv();
+    startTransition(() => {
+      const csv = fund.exportTransactionsCsv();
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");

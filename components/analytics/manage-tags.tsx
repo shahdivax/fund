@@ -6,11 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TagSwatch } from "@/components/ui/tag-swatch";
 import { ConfirmDelete } from "@/components/ui/confirm-delete";
-import {
-  createTag,
-  updateTag,
-  deleteTag,
-} from "@/lib/actions/tags";
+import { useFund } from "@/lib/store/fund-provider";
 import { CHART_COLORS } from "@/lib/constants";
 import type { Tag } from "@/lib/types";
 
@@ -19,6 +15,7 @@ export function ManageTags({
 }: {
   tags: (Tag & { usageCount: number })[];
 }) {
+  const fund = useFund();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editName, setEditName] = useState("");
   const [editColor, setEditColor] = useState("");
@@ -37,8 +34,8 @@ export function ManageTags({
 
   const saveEdit = () => {
     if (!editingId || !editName.trim()) return;
-    startTransition(async () => {
-      await updateTag(editingId, {
+    startTransition(() => {
+      fund.updateTag(editingId, {
         name: editName,
         color: editColor,
         isRecurring: editRecurring,
@@ -49,8 +46,8 @@ export function ManageTags({
 
   const handleCreate = () => {
     if (!newName.trim()) return;
-    startTransition(async () => {
-      await createTag({
+    startTransition(() => {
+      fund.createTag({
         name: newName,
         color: newColor,
       });
@@ -166,8 +163,8 @@ export function ManageTags({
                   {tag.name !== "Other" && (
                     <ConfirmDelete
                       label="Delete"
-                      onConfirm={async () => {
-                        await deleteTag(tag.id);
+                      onConfirm={() => {
+                        fund.deleteTag(tag.id);
                       }}
                     />
                   )}

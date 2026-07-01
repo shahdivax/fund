@@ -6,25 +6,24 @@ import { Input } from "@/components/ui/input";
 import { TagSwatch } from "@/components/ui/tag-swatch";
 import { AmountDisplay } from "@/components/ui/amount-display";
 import { TransactionForm } from "@/components/transactions/transaction-form";
+import { useFund } from "@/lib/store/fund-provider";
 import { formatCurrency, netColorClass } from "@/lib/utils/currency";
 import {
   formatDayHeader,
   formatMonthHeader,
   groupTransactionsByMonthAndDay,
 } from "@/lib/utils/dates";
-import type { Tag, TransactionWithRelations } from "@/lib/types";
+import type { TransactionWithRelations } from "@/lib/types";
 
 function entryLabel(t: TransactionWithRelations): string {
   return t.description || t.quickAdd?.label || t.tag?.name || "Entry";
 }
 
-export function HistoryClient({
-  transactions,
-  tags,
-}: {
-  transactions: TransactionWithRelations[];
-  tags: Tag[];
-}) {
+export function HistoryClient() {
+  const fund = useFund();
+  const transactions = fund.getTransactions();
+  const tags = fund.getTags();
+
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);

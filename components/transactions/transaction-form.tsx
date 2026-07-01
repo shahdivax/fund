@@ -7,11 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetActions, SheetSubmit } from "@/components/ui/sheet";
 import { ConfirmDelete } from "@/components/ui/confirm-delete";
 import { TagSwatch } from "@/components/ui/tag-swatch";
-import {
-  createTransaction,
-  updateTransaction,
-  deleteTransaction,
-} from "@/lib/actions/transactions";
+import { useFund } from "@/lib/store/fund-provider";
 import {
   parseAmountToPaise,
   paiseToInputValue,
@@ -36,6 +32,7 @@ export function TransactionForm({
   quickAdd,
   mode = "create",
 }: TransactionFormProps) {
+  const fund = useFund();
   const [type, setType] = useState<"income" | "expense">("expense");
   const [amount, setAmount] = useState("");
   const [tagId, setTagId] = useState<number | null>(null);
@@ -98,9 +95,9 @@ export function TransactionForm({
     const paise = parseAmountToPaise(amount);
     if (paise === null || paise <= 0) return;
 
-    startTransition(async () => {
+    startTransition(() => {
       if (isEdit && transaction) {
-        await updateTransaction(transaction.id, {
+        fund.updateTransaction(transaction.id, {
           type,
           amount: paise,
           tagId,
@@ -108,7 +105,7 @@ export function TransactionForm({
           date,
         });
       } else {
-        await createTransaction({
+        fund.createTransaction({
           type,
           amount: paise,
           tagId,
@@ -123,8 +120,8 @@ export function TransactionForm({
 
   const handleDelete = () => {
     if (!transaction) return;
-    startTransition(async () => {
-      await deleteTransaction(transaction.id);
+    startTransition(() => {
+      fund.deleteTransaction(transaction.id);
       onClose();
     });
   };

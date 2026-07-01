@@ -6,11 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TagSwatch } from "@/components/ui/tag-swatch";
 import { ConfirmDelete } from "@/components/ui/confirm-delete";
-import {
-  createQuickAdd,
-  updateQuickAdd,
-  deleteQuickAdd,
-} from "@/lib/actions/quick-adds";
+import { useFund } from "@/lib/store/fund-provider";
 import {
   parseAmountToPaise,
   paiseToInputValue,
@@ -39,6 +35,7 @@ export function ManageQuickAdds({
   quickAdds: QuickAdd[];
   tags: Tag[];
 }) {
+  const fund = useFund();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [showNew, setShowNew] = useState(false);
@@ -62,9 +59,9 @@ export function ManageQuickAdds({
       ? parseAmountToPaise(form.defaultAmount)
       : null;
 
-    startTransition(async () => {
+    startTransition(() => {
       if (id) {
-        await updateQuickAdd(id, {
+        fund.updateQuickAdd(id, {
           label: form.label,
           type: form.type,
           tagId: form.tagId,
@@ -72,7 +69,7 @@ export function ManageQuickAdds({
         });
         setEditingId(null);
       } else {
-        await createQuickAdd({
+        fund.createQuickAdd({
           label: form.label,
           type: form.type,
           tagId: form.tagId,
@@ -199,8 +196,8 @@ export function ManageQuickAdds({
                   </Button>
                   <ConfirmDelete
                     label="Delete"
-                    onConfirm={async () => {
-                      await deleteQuickAdd(qa.id);
+                    onConfirm={() => {
+                      fund.deleteQuickAdd(qa.id);
                     }}
                   />
                 </div>
