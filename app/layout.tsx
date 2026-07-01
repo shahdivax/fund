@@ -4,6 +4,12 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "fund",
   description: "Personal expense tracker",
+  applicationName: "fund",
+  appleWebApp: {
+    capable: true,
+    title: "fund",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export const viewport: Viewport = {
